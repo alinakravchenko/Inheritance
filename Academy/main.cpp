@@ -1,7 +1,7 @@
-#include<iostream>
+п»ї#include<iostream>
 #include<string>
 using namespace std;
-//Generalisation - обобщение
+//Generalisation - РѕР±РѕР±С‰РµРЅРёРµ
 class Human
 {
 protected:
@@ -104,7 +104,7 @@ public:
 	(
 		const string& last_name, const string& first_name, unsigned int age,
 		const string& specialty, const string& group, unsigned int year, double rating, double attendance
-	):Human(last_name, first_name, age)	//Dелегируем конструктор Human класса
+	):Human(last_name, first_name, age)	//DРµР»РµРіРёСЂСѓРµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Human РєР»Р°СЃСЃР°
 	{
 		set_specialty(specialty);
 		set_group(group);
@@ -200,7 +200,7 @@ public:
 	void print()const
 	{
 		Student::print();
-		cout << "Тема диплома: " << diploma << endl;
+		cout << "РўРµРјР° РґРёРїР»РѕРјР°: " << diploma << endl;
 	}
 };
 void main()
@@ -219,7 +219,7 @@ void main()
 	graduate.print();
 }
 
-//Синтаксис наследования
+//РЎРёРЅС‚Р°РєСЃРёСЃ РЅР°СЃР»РµРґРѕРІР°РЅРёСЏ
 //class Base
 //{
 //	//....
