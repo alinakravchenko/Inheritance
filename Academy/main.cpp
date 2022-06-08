@@ -1,7 +1,13 @@
 ﻿#include<iostream>
 #include<string>
 using namespace std;
+#define tab "\n-----------------------\n"
 //Generalisation - обобщение
+//Polymorphism (многоформенность) - способность объектов вести себя по разному
+//в зависимости об обстоятельств.
+//Inclusion polymorphism (RinTime polymorphism) - возможен только при наследовании.
+#define HUMAN_TAKE_PARAMETERS const string& last_name, const string& first_name, unsigned int age
+#define HUMAN_GIVE_PARAMETERS last_name, first_name, age
 class Human
 {
 protected:
@@ -34,7 +40,7 @@ public:
 		this->age = age;
 	}
 	//					Constructors:
-	Human(const string& last_name, const string& first_name, unsigned int age)
+	Human(HUMAN_TAKE_PARAMETERS)
 	{
 		set_last_name(last_name);
 		set_first_name(first_name);
@@ -46,11 +52,13 @@ public:
 		cout << "HDestructor:\t" << this << endl;
 	}
 	//				Methods:
-	void print()const
+	virtual void print()const
 	{
 		cout << last_name << " " << first_name << " " << age << "years.\n";
 	}
 };
+#define STUDENT_TAKE_PATAMETERS const string& specialty, const string& group, unsigned int year, double rating, double attendance
+#define STUDENT_GIVE_PARAMETERS specialty, group, year, rating, attendance
 class Student :public Human
 {
 	string specialty;
@@ -101,10 +109,7 @@ public:
 	}
 	//				Constructors:
 	Student
-	(
-		const string& last_name, const string& first_name, unsigned int age,
-		const string& specialty, const string& group, unsigned int year, double rating, double attendance
-	):Human(last_name, first_name, age)	//Dелегируем конструктор Human класса
+	(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PATAMETERS):Human(HUMAN_GIVE_PARAMETERS)	//Dелегируем конструктор Human класса
 	{
 		set_specialty(specialty);
 		set_group(group);
@@ -203,9 +208,11 @@ public:
 		cout << "Тема диплома: " << diploma << endl;
 	}
 };
+//#define INHERITANCE_CHECK
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef INHERITANCE_CHECK
 	Human human("Montana", "Antonio", 25);
 	human.print();
 
@@ -217,6 +224,27 @@ void main()
 
 	Graduate graduate("Stiles", "Stilinski", 22, "Programming", "PV_111", 4, 6, 100, "C++");
 	graduate.print();
+#endif
+	//Generalisation:
+	//массив указателя на человека
+	  Human* group[] =                   
+	 {
+		  new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),
+		  new Teacher("White", "Walter", 50, "Chemistry", 25),
+		  new Graduate("Schreder", "Hank", 40,
+		  "Criminalystic", "WW_220",5, 95,80, "How to catch Heisenberg"),
+		  new Student("Vercetti", "Tomas", 30, "Theft", "Vice", 3, 90, 85),
+		  new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20),
+		  new Teacher("Einstein", "Albert", 143, "Astronomy", 100)
+
+	 };
+	  //Specialisation - уточнение
+		  cout << tab << endl;
+	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	  {
+		  group[i]->print();
+		  cout << tab << endl;
+	  }
 }
 
 //Синтаксис наследования
