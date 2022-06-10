@@ -47,16 +47,17 @@ public:
 		set_age(age);
 		cout << "HConstructor:\t" << this << endl;
 	}
-	~Human()
+	virtual~Human()
 	{
 		cout << "HDestructor:\t" << this << endl;
 	}
 	//				Methods:
-	virtual void print()const
+	virtual void print()const //без virtual раннее связывание 
 	{
 		cout << last_name << " " << first_name << " " << age << "years.\n";
 	}
 };
+
 #define STUDENT_TAKE_PATAMETERS const string& specialty, const string& group, unsigned int year, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, year, rating, attendance
 class Student :public Human
@@ -165,8 +166,9 @@ public:
 	{
 		cout << "TDestructor:\t" << this << endl;
 	}
+	
 	//				Methods:
-	void print()const
+ void print()const  
 	{
 		{
 			Human::print();
@@ -227,13 +229,14 @@ void main()
 #endif
 	//Generalisation:
 	//массив указателя на человека
+	//Upcast - приведение к базовому типу
 	  Human* group[] =                   
 	 {
-		  new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),
-		  new Teacher("White", "Walter", 50, "Chemistry", 25),
+		  new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),//upcast
+		  new Teacher("White", "Walter", 50, "Chemistry", 25),//upcast
 		  new Graduate("Schreder", "Hank", 40,
 		  "Criminalystic", "WW_220",5, 95,80, "How to catch Heisenberg"),
-		  new Student("Vercetti", "Tomas", 30, "Theft", "Vice", 3, 90, 85),
+		  new Student("Vercetti", "Tomas", 30, "Theft", "Vice", 3, 90, 85),//upcast
 		  new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20),
 		  new Teacher("Einstein", "Albert", 143, "Astronomy", 100)
 
@@ -242,8 +245,15 @@ void main()
 		  cout << tab << endl;
 	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	  {
-		  group[i]->print();
+		  //RTTI - Runtime Type Information
+		  cout << typeid(*group[i]).name() << endl;
+		 /* group[i]->print();*/
+		  cout << *group[i] << endl;
 		  cout << tab << endl;
+	  }
+	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++) //Human*
+	  {
+		  delete[] group[i];
 	  }
 }
 
