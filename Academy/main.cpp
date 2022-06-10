@@ -57,7 +57,12 @@ public:
 		cout << last_name << " " << first_name << " " << age << "years.\n";
 	}
 };
-
+ostream& operator<<(ostream& os, const Human& obj)
+{
+	return
+		os << obj.get_last_name() << " " << obj.get_first_name()
+		<< " " << obj.get_age() << " years.\n";
+}
 #define STUDENT_TAKE_PATAMETERS const string& specialty, const string& group, unsigned int year, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, year, rating, attendance
 class Student :public Human
@@ -130,6 +135,14 @@ public:
 		cout << specialty + " " + group << " " << year << " " << rating << " " << attendance << endl;
 	}
 };
+ostream& operator<<(ostream& os, const Student& obj)
+{
+	/*os << (Human&)obj;*/
+	return os<<(Human&)obj
+		<<obj.get_specialty()<<" Specialty " << " Group "
+		<< obj.get_group()  << " Year "<< obj.get_year() <<" Rating " <<obj.get_rating()
+		<< " Attendance "<< obj.get_attendance();
+}
 class Teacher :public Human
 {
 	string speciality;
@@ -176,6 +189,12 @@ public:
 		}
 	}
 };
+ostream& operator<<(ostream& os, const Teacher& obj)
+{
+	return os<<(Human&)obj
+		<< " специальность " << obj.get_speciality()
+		<<  " опыт преподавания " << obj.get_experience() << " лет.";
+}
 class Graduate :public Student
 {
 	string diploma;
@@ -210,6 +229,10 @@ public:
 		cout << "Тема диплома: " << diploma << endl;
 	}
 };
+ostream& operator<<(ostream& os, const Graduate& obj)
+{
+	return os << (Student&)obj << obj.get_diploma();
+}
 //#define INHERITANCE_CHECK
 void main()
 {
@@ -248,7 +271,13 @@ void main()
 		  //RTTI - Runtime Type Information
 		  cout << typeid(*group[i]).name() << endl;
 		 /* group[i]->print();*/
-		  cout << *group[i] << endl;
+		 /* cout << *group[i] << endl;*/
+		 //dynamic_cast работает только с указателями на классы
+		  //dynamic_cast<DerivedCladss*>(BasePointer) - преобраз. указатель на базовый класс
+		  //в указатель на дочерний класс (downcast)
+		  if (typeid(*group[i]) == typeid(Teacher)) cout << *dynamic_cast<Teacher*>(group[i]) << endl;
+		  if (typeid(*group[i]) == typeid(Student)) cout << *dynamic_cast<Student*>(group[i]) << endl;
+		  if (typeid(*group[i]) == typeid(Graduate)) cout << *dynamic_cast<Graduate*>(group[i]) << endl;
 		  cout << tab << endl;
 	  }
 	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++) //Human*
