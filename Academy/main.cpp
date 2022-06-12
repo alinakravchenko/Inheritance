@@ -247,8 +247,8 @@ void main()
 	  {
 		  //RTTI - Runtime Type Information
 		  cout << typeid(*group[i]).name() << endl;
-		 /* group[i]->print();*/
-		  cout << *group[i] << endl;
+		  group[i]->print();
+		  /*cout << *group[i] << endl;*/
 		  cout << tab << endl;
 	  }
 	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++) //Human*
