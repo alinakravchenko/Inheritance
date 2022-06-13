@@ -52,11 +52,17 @@ public:
 		cout << "HDestructor:\t" << this << endl;
 	}
 	//				Methods:
-	virtual void print()const //без virtual раннее связывание 
+	//без virtual раннее связывание 
+	virtual ostream& print(ostream& os/*=cout*/)const
 	{
-		cout << last_name << " " << first_name << " " << age << "years.\n";
+		return os << last_name << " " << first_name << " " << age<<"years.\n";
+		
 	}
 };
+	ostream& operator<<(ostream& os, const Human& obj)
+	{
+			return obj.print(os);
+	}
 
 #define STUDENT_TAKE_PATAMETERS const string& specialty, const string& group, unsigned int year, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, year, rating, attendance
@@ -124,10 +130,10 @@ public:
 		cout << "SDestructor:\t" << this << endl;
 	}
 	//				Methods:
-	void print()const
+	ostream& print(ostream& os)const
 	{
-		Human::print();
-		cout << specialty + " " + group << " " << year << " " << rating << " " << attendance << endl;
+		Human::print(os);
+		return os << specialty + " " + group << " " << year << " " << rating << " " << attendance << endl;
 	}
 };
 class Teacher :public Human
@@ -168,11 +174,11 @@ public:
 	}
 	
 	//				Methods:
- void print()const  
+	ostream& print(ostream& os)const
 	{
 		{
-			Human::print();
-			cout << "speciality\t" << speciality + " " << "experience\t" << experience << endl;
+		Human::print(os);
+			return os<< "speciality\t" << speciality + " " << "experience\t" << experience << endl;
 		}
 	}
 };
@@ -204,10 +210,10 @@ public:
 		cout << "GDestructor:\t" << this << endl;
 	}
 	//					Methods:
-	void print()const
+	ostream& print(ostream& os)const
 	{
-		Student::print();
-		cout << "Тема диплома: " << diploma << endl;
+		//Student::print(os);
+		return Student::print(os) << "Тема диплома: " << diploma << endl;
 	}
 };
 //#define INHERITANCE_CHECK
@@ -247,8 +253,8 @@ void main()
 	  {
 		  //RTTI - Runtime Type Information
 		  cout << typeid(*group[i]).name() << endl;
-		  group[i]->print();
-		  /*cout << *group[i] << endl;*/
+		  /*group[i]->print();*/
+		  cout << *group[i] << endl;
 		  cout << tab << endl;
 	  }
 	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++) //Human*
