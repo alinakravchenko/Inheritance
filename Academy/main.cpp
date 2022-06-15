@@ -1,5 +1,6 @@
 ﻿#include<iostream>
 #include<string>
+#include<fstream>
 using namespace std;
 #define tab "\n-----------------------\n"
 //Generalisation - обобщение
@@ -55,14 +56,25 @@ public:
 	//без virtual раннее связывание 
 	virtual ostream& print(ostream& os/*=cout*/)const
 	{
-		return os << last_name << " " << first_name << " " << age<<"years.\n";
-		
+		return os << last_name << " " << first_name << " " << age << "years.\n";
+
+	}
+	virtual std::ofstream& write(std::ofstream& fout)const 
+	{
+		//ofstream fout("File.txt", std::ios_base::app);
+		fout << last_name << " " << first_name << " " << age << " лет.";
+		//fout.close();
+		return fout;
 	}
 };
-	ostream& operator<<(ostream& os, const Human& obj)
-	{
-			return obj.print(os);
-	}
+ostream& operator<<(ostream& os, const Human& obj)
+{
+	return obj.print(os);
+}
+ofstream& operator<<(ofstream& os, const Human& obj)
+{
+	return obj.write(os);
+}
 
 #define STUDENT_TAKE_PATAMETERS const string& specialty, const string& group, unsigned int year, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, year, rating, attendance
@@ -102,7 +114,7 @@ public:
 	{
 		this->group = group;
 	}
-	void set_year(unsigned int year )
+	void set_year(unsigned int year)
 	{
 		this->year = year;
 	}
@@ -116,7 +128,7 @@ public:
 	}
 	//				Constructors:
 	Student
-	(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PATAMETERS):Human(HUMAN_GIVE_PARAMETERS)	//Dелегируем конструктор Human класса
+	(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PATAMETERS) :Human(HUMAN_GIVE_PARAMETERS)	//Dелегируем конструктор Human класса
 	{
 		set_specialty(specialty);
 		set_group(group);
@@ -134,6 +146,17 @@ public:
 	{
 		Human::print(os);
 		return os << specialty + " " + group << " " << year << " " << rating << " " << attendance << endl;
+	}
+	/*ofstream& print(ofstream& os)const
+	{
+		Human::print(os);
+		return os << specialty + " " + group << " " << year << " " << rating << " " << attendance << endl;
+	}*/
+	std::ofstream& write(std::ofstream& fout)const
+	{
+		Human::write(fout);
+		fout << specialty + " " + group << " " << year << " " << rating << " " << attendance;
+		return fout;
 	}
 };
 class Teacher :public Human
@@ -172,15 +195,26 @@ public:
 	{
 		cout << "TDestructor:\t" << this << endl;
 	}
-	
+
 	//				Methods:
 	ostream& print(ostream& os)const
 	{
-		{
 		Human::print(os);
-			return os<< "speciality\t" << speciality + " " << "experience\t" << experience << endl;
-		}
+		return os << "speciality\t" << speciality + " " << "experience\t" << experience << endl;
 	}
+	ofstream& write(ofstream& os)const
+	{
+		Human::write(os);
+		os << "speciality\t" << speciality + " " << "experience\t" << experience;
+		return os;
+	}
+	/*void write()
+	{
+		Human::write();
+		ofstream fout("File.txt", std::ios_base::app);
+		fout << "speciality\t" << speciality + " " << "experience\t" << experience << endl;
+		fout.close();
+	}*/
 };
 class Graduate :public Student
 {
@@ -200,7 +234,7 @@ public:
 		const string& last_name, const string& first_name, unsigned int age,
 		const string& speciality, const string& group, unsigned int year, double rating, double attendance,
 		const string& diploma
-	) :Student(last_name, first_name, age,speciality, group, year, rating, attendance)
+	) :Student(last_name, first_name, age, speciality, group, year, rating, attendance)
 	{
 		set_diploma(diploma);
 		cout << "GConstructor:\t" << this << endl;
@@ -215,8 +249,19 @@ public:
 		//Student::print(os);
 		return Student::print(os) << "Тема диплома: " << diploma << endl;
 	}
+	/*ofstream& print(ofstream& os)const
+	{
+		return Student::print(os) << "Тема диплома: " << diploma << endl;
+	}*/
+	std::ofstream& write(std::ofstream& fout)
+	{
+		Student::write(fout);
+		fout << "Тема диплома: " << diploma;
+		return fout;
+	}
 };
 //#define INHERITANCE_CHECK
+//#define COUT
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -233,34 +278,59 @@ void main()
 	Graduate graduate("Stiles", "Stilinski", 22, "Programming", "PV_111", 4, 6, 100, "C++");
 	graduate.print();
 #endif
+#ifdef COUT
 	//Generalisation:
 	//массив указателя на человека
 	//Upcast - приведение к базовому типу
-	  Human* group[] =                   
-	 {
-		  new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),//upcast
-		  new Teacher("White", "Walter", 50, "Chemistry", 25),//upcast
-		  new Graduate("Schreder", "Hank", 40,
-		  "Criminalystic", "WW_220",5, 95,80, "How to catch Heisenberg"),
-		  new Student("Vercetti", "Tomas", 30, "Theft", "Vice", 3, 90, 85),//upcast
-		  new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20),
-		  new Teacher("Einstein", "Albert", 143, "Astronomy", 100)
+	Human* group[] =
+	{
+		 new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),//upcast
+		 new Teacher("White", "Walter", 50, "Chemistry", 25),//upcast
+		 new Graduate("Schreder", "Hank", 40,
+		 "Criminalystic", "WW_220",5, 95,80, "How to catch Heisenberg"),
+		 new Student("Vercetti", "Tomas", 30, "Theft", "Vice", 3, 90, 85),//upcast
+		 new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20),
+		 new Teacher("Einstein", "Albert", 143, "Astronomy", 100)
 
-	 };
-	  //Specialisation - уточнение
-		  cout << tab << endl;
-	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
-	  {
-		  //RTTI - Runtime Type Information
-		  cout << typeid(*group[i]).name() << endl;
-		  /*group[i]->print();*/
-		  cout << *group[i] << endl;
-		  cout << tab << endl;
-	  }
-	  for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++) //Human*
-	  {
-		  delete[] group[i];
-	  }
+	};
+	//Specialisation - уточнение
+	cout << tab << endl;
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		//RTTI - Runtime Type Information
+		cout << typeid(*group[i]).name() << endl;
+		/*group[i]->print();*/
+		cout << *group[i] << endl;
+		cout << tab << endl;
+	}
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++) //Human*
+	{
+		delete[] group[i];
+	}
+#endif
+	Human* group[] =
+	{
+		new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),//upcast
+		new Teacher("White", "Walter", 50, "Chemistry", 25),//upcast
+		new Graduate("Schreder", "Hank", 40,
+		"Criminalystic", "WW_220",5, 95,80, "How to catch Heisenberg"),
+		new Student("Vercetti", "Tomas", 30, "Theft", "Vice", 3, 90, 85),//upcast
+		new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20),
+		new Teacher("Einstein", "Albert", 143, "Astronomy", 100)
+
+	};
+	ofstream fout("File.txt"/*, std::ios_base::app*/); //создание и открытие потока
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		//group[i]->write();
+		fout << *group[i] << endl;
+	}
+	system("notepad File.txt");
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		delete[] group[i];
+	}
+	fout.close();
 }
 
 //Синтаксис наследования
