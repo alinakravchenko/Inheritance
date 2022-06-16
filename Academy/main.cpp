@@ -62,7 +62,10 @@ public:
 	virtual std::ofstream& write(std::ofstream& fout)const 
 	{
 		//ofstream fout("File.txt", std::ios_base::app);
-		fout << last_name << " " << first_name << " " << age << " лет.";
+		fout.width(20);
+		fout << std::left;
+		fout << last_name + " " + first_name;
+		fout<< age << " лет.";
 		//fout.close();
 		return fout;
 	}
@@ -154,8 +157,16 @@ public:
 	}*/
 	std::ofstream& write(std::ofstream& fout)const
 	{
-		Human::write(fout);
-		fout << specialty + " " + group << " " << year << " " << rating << " " << attendance;
+		Human::write(fout) << " ";;
+		fout.width(20);
+		fout << std::left;
+		fout << specialty;
+		fout.width(8);
+		fout << group << " " << year;
+		fout.width(8);
+		fout << std::right;
+		/*fout << std::setprecision(2) << std::fixed;*/
+		fout << rating << " " << attendance;
 		return fout;
 	}
 };
@@ -205,7 +216,11 @@ public:
 	ofstream& write(ofstream& os)const
 	{
 		Human::write(os);
-		os << "speciality\t" << speciality + " " << "experience\t" << experience;
+		/*os.width(20);*/
+		os <<" " <<"speciality\t" << speciality + " ";
+		os.width(5);
+		os << right; 
+		os<< "experience\t" << experience;
 		return os;
 	}
 	/*void write()
@@ -256,7 +271,7 @@ public:
 	std::ofstream& write(std::ofstream& fout)
 	{
 		Student::write(fout);
-		fout << "Тема диплома: " << diploma;
+		fout <<left<<"Тема диплома: " << diploma;
 		return fout;
 	}
 };

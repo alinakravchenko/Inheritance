@@ -1,11 +1,12 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<fstream>
 using namespace std;
-//#define WRITE_FILE
+//#define WRITE_TO_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
-#ifdef WRITE_FILE
+#ifdef WRITE_TO_FILE
 	/*cout << "Hello world\n";*/
 	ofstream fout; //1) создаём поток
 	fout.open("File.txt", std::ios_base::app);/*append*/ //2) открываем поток
@@ -18,27 +19,30 @@ void main()
 
 	system("notepad File.txt");
 #endif 
-	/*const int SIZE = 256;*/
-	char buffer[80]; // буфер промежуточного хранения считываемого из файла текста
-	ifstream fin("File.txt"); 
-
-	if (fin.is_open())// если файл открыт
-	{
-		
-			fin >> buffer; // считали первое слово из файла
-			fin.getline(buffer, 50); // считали строку из файла
-			cout << buffer << endl; // напечатали это слово
-	}
-	else
-	{
-		
-		cout << "Файл открыт!\n"; // сообщить об этом
-		
-		//cout << buffer << endl; // напечатали эту строку
-	}
-	fin.close(); // закрываем файл
-	/*system("pause");*/
-	//return 0;
+	const int SIZE = 256;
+	//sz - string zero
+	char sz_filename[SIZE] = {}; // буфер промежуточного хранения считываемого из файла текста
+	cout << "Введите имя файла";
+	cin.getline(sz_filename, SIZE);
+	//strcmp() - string compare (сравнение строк) 
+	//int strcmp(char* str1, char* str2);
+	//если фун-я вернула 0б значит строки идентичны,
+	//значение отличное от нуля - строки разные
+	if (strcmp(sz_filename + strlen(sz_filename) - 4, "txt."))
+		//strlen() - возвращает 
+	strcat(sz_filename, ".txt");
+	ofstream fout;
+	fout.open(sz_filename, std::ios_base::app);
+	char sz_contents[SIZE] = {};
+	cout << "Введите содержимое файла";
+	cin.getline(sz_contents, SIZE);
+	fout << sz_contents;
+	fout.close();
+	char sz_command[SIZE] = "notepad ";
+	strcat(sz_command, sz_filename);
+	//функ-я strcat(char* str1, char* str2) выполняет конкатенацию/слияние строк
+	//к содерж. первой строки доб. содержимое второй строки
+	system(sz_command);
 
 	
 }
