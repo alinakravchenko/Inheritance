@@ -18,7 +18,7 @@ void main()
 
 
 	system("notepad File.txt");
-#endif 
+
 	const int SIZE = 256;
 	//sz - string zero
 	char sz_filename[SIZE] = {}; // буфер промежуточного хранения считываемого из файла текста
@@ -43,7 +43,25 @@ void main()
 	//функ-я strcat(char* str1, char* str2) выполняет конкатенацию/слияние строк
 	//к содерж. первой строки доб. содержимое второй строки
 	system(sz_command);
-
-	
+#endif
+	std::ifstream fin;
+	fin.open("File.txt");
+	if (fin.is_open())
+	{
+		//TODO: read file
+		const int n = 256;
+		char buffer[n] = {};
+		while (!fin.eof()) //eof() - end of file
+		{
+			fin.getline(buffer, n);
+			cout << buffer << endl;
+		}
+	}
+	else
+	{
+		std::cerr << "Error: file not found!" << endl;
+	}
+	fin.close();
+	system("notepad File.txt");
 }
 
