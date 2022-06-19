@@ -69,6 +69,12 @@ public:
 		//fout.close();
 		return fout;
 	}
+	virtual std::ifstream& scan(std::ifstream& ifs)
+	{
+		std::string buffer;
+		ifs >> last_name >> first_name >> age;
+		return ifs;
+	}
 };
 ostream& operator<<(ostream& os, const Human& obj)
 {
@@ -78,7 +84,10 @@ ofstream& operator<<(ofstream& os, const Human& obj)
 {
 	return obj.write(os);
 }
-
+std::istream& operator>>(std::ifstream& ifs, Human& obj)
+{
+	return obj.scan(ifs);
+}
 #define STUDENT_TAKE_PATAMETERS const string& specialty, const string& group, unsigned int year, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, year, rating, attendance
 class Student :public Human
@@ -169,6 +178,16 @@ public:
 		fout << rating << " " << attendance;
 		return fout;
 	}
+	std::ifstream& scan(std::ifstream& ifs)
+	{
+		Human::scan(ifs);
+		ifs >> specialty;
+		ifs >> group;
+		ifs >> year;
+		ifs >> rating;
+		ifs >> attendance;
+		return ifs;
+	}
 };
 class Teacher :public Human
 {
@@ -230,6 +249,18 @@ public:
 		fout << "speciality\t" << speciality + " " << "experience\t" << experience << endl;
 		fout.close();
 	}*/
+	std::ifstream& scan(std::ifstream& ifs)
+	{
+		Human::scan(ifs);
+		//ifs >> speciality;
+		const int n = 25;
+		char speciality[n] = {};
+		ifs.read(speciality, n);
+		for (int i = n - 1; speciality[i] == ' '; i--)speciality[i] = 0;
+		set_speciality(speciality);
+		ifs >> experience;
+		return ifs;
+	}
 };
 class Graduate :public Student
 {
@@ -274,9 +305,61 @@ public:
 		fout <<left<<"Тема диплома: " << diploma;
 		return fout;
 	}
+	std::ifstream& scan(std::ifstream& ifs)
+	{
+		Student::scan(ifs);
+		std::getline(ifs, this->diploma);
+		return ifs;
+	}
 };
+Human* HumanFactory(const std::string& type)
+{
+	//npos - конец строки в классе String
+	if (type.find("class Student") != std::string::npos)return new Student("", "", 0, "", "", 0, 0, 0);
+	if (type.find("class Graduate") != std::string::npos)return new Graduate("", "", 0, "", "", 0, 0, 0, "");
+	if (type.find("class Teacher") != std::string::npos)return new Teacher("", "", 0, "", 0);
+}
+Human** load(const std::string& filename, int& n)
+{
+	Human** group; //массив
+	//int n = 0;                 //размер массива
+	std::ifstream fin(filename);
+
+	if (fin.is_open())
+	{
+		std::string buffer;
+		//считаем размер массива
+		while (!fin.eof())
+		{
+			std::getline(fin, buffer);
+			n++;
+		}
+		n--;
+		//выделение памяти (создание массива)
+		group = new Human* [n] {};
+
+		//возвращаемся в начало файла
+		fin.clear();
+		fin.seekg(0);
+		for (int i = 0; i < n; i++)
+		{
+			std::getline(fin, buffer, ':'); 
+			group[i] = HumanFactory(buffer);
+			fin >> *group[i];
+		}
+	}
+	else
+	{
+		//cerr - сообщениe об ошибке
+		std::cerr << "Error: file not found" << endl;
+		return nullptr;
+	}
+	fin.close();
+	return group;
+}
 //#define INHERITANCE_CHECK
 //#define COUT
+//#define WRITE_TO_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -323,6 +406,7 @@ void main()
 		delete[] group[i];
 	}
 #endif
+#ifdef WRITE_TO_FILE
 	Human* group[] =
 	{
 		new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 95),//upcast
@@ -338,6 +422,7 @@ void main()
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		//group[i]->write();
+		fout << typeid(*group[i]).name() << ":\t";
 		fout << *group[i] << endl;
 	}
 	system("notepad File.txt");
@@ -346,6 +431,19 @@ void main()
 		delete[] group[i];
 	}
 	fout.close();
+#endif
+	int n = 0;
+	Human** group = load("Academy.txt", n);
+	for (int i = 0; i < n; i++)
+	{
+		cout << *group[i] << endl;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		delete group[i];
+	}
+	delete[] group;
+
 }
 
 //Синтаксис наследования
