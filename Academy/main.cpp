@@ -59,19 +59,19 @@ public:
 		return os << last_name << " " << first_name << " " << age << "years.\n";
 
 	}
-	virtual std::ofstream& write(std::ofstream& fout)const 
+	virtual std::ofstream& write(std::ofstream& fout)const
 	{
 		//ofstream fout("File.txt", std::ios_base::app);
 		fout.width(20);
 		fout << std::left;
 		fout << last_name + " " + first_name;
-		fout<< age << " лет.";
+		fout << age;
 		//fout.close();
 		return fout;
 	}
 	virtual std::ifstream& scan(std::ifstream& ifs)
 	{
-		std::string buffer;
+//		std::string buffer;
 		ifs >> last_name >> first_name >> age;
 		return ifs;
 	}
@@ -234,12 +234,12 @@ public:
 	}
 	ofstream& write(ofstream& os)const
 	{
-		Human::write(os);
-		/*os.width(20);*/
-		os <<" " <<"speciality\t" << speciality + " ";
+		Human::write(os) << " ";
+		os.width(25);
+		os << speciality;
 		os.width(5);
-		os << right; 
-		os<< "experience\t" << experience;
+		os << right;
+		os << experience;
 		return os;
 	}
 	/*void write()
@@ -299,10 +299,10 @@ public:
 	{
 		return Student::print(os) << "Тема диплома: " << diploma << endl;
 	}*/
-	std::ofstream& write(std::ofstream& fout)
+	std::ofstream& write(std::ofstream& fout)const
 	{
-		Student::write(fout);
-		fout <<left<<"Тема диплома: " << diploma;
+		Student::write(fout) << " ";
+		fout << left << diploma;
 		return fout;
 	}
 	std::ifstream& scan(std::ifstream& ifs)
@@ -343,7 +343,7 @@ Human** load(const std::string& filename, int& n)
 		fin.seekg(0);
 		for (int i = 0; i < n; i++)
 		{
-			std::getline(fin, buffer, ':'); 
+			std::getline(fin, buffer, ':');
 			group[i] = HumanFactory(buffer);
 			fin >> *group[i];
 		}
@@ -360,6 +360,7 @@ Human** load(const std::string& filename, int& n)
 //#define INHERITANCE_CHECK
 //#define COUT
 //#define WRITE_TO_FILE
+
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -418,20 +419,23 @@ void main()
 		new Teacher("Einstein", "Albert", 143, "Astronomy", 100)
 
 	};
-	ofstream fout("File.txt"/*, std::ios_base::app*/); //создание и открытие потока
+	ofstream fout("Academy.txt"/*, std::ios_base::app*/); //создание и открытие потока
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		//group[i]->write();
 		fout << typeid(*group[i]).name() << ":\t";
 		fout << *group[i] << endl;
+		cout << *group[i] << endl;
 	}
-	system("notepad File.txt");
+	system("notepad Academy.txt");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete[] group[i];
 	}
 	fout.close();
 #endif
+
+#ifndef WRITE_TO_FILE
 	int n = 0;
 	Human** group = load("Academy.txt", n);
 	for (int i = 0; i < n; i++)
@@ -443,6 +447,8 @@ void main()
 		delete group[i];
 	}
 	delete[] group;
+#endif // !WRITE_TO_FILE
+
 
 }
 
@@ -455,3 +461,11 @@ void main()
 //{
 //	//....
 //};
+/*
+type name(parameters);
+
+virtual type name(parameters)=0;
+=0; - показывает, что такая функция без определения
+
+
+*/
