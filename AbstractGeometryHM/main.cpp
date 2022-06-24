@@ -163,6 +163,56 @@ namespace Geometry
 			Shape::info();
 		}
 	};
+	class Circle :public Shape
+	{
+		double radius;
+		CONST double PI = 3.141592653589793;
+	public:
+		double get_radius()const
+		{
+			return radius;
+		}
+
+		void set_radius(double radius)
+		{
+			if (radius <= 0) radius = 5;
+			this->radius = radius;
+		}
+		Circle(double radius, Color color) :Shape(color)
+		{
+			set_radius(radius);
+		}
+		~Circle() {}
+		double get_area()const
+		{
+			return PI * (radius * radius);
+		}
+		double get_perimeter()const
+		{
+			return 2 * PI * radius;
+		}
+		void draw()const
+		{
+			HWND hwnd = GetConsoleWindow();
+			HDC hdc = GetDC(hwnd);
+			HPEN hPen = CreatePen(PS_SOLID, 10, color);
+			SelectObject(hdc, hPen);
+			HBRUSH hBrush = CreateSolidBrush(color);
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+
+			::Ellipse(hdc, 0, 0, 180, 180);
+			DeleteObject(hBrush);
+			DeleteObject(hPen);
+			ReleaseDC(hwnd, hdc);
+		}
+		void info()const
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Радиус: " << radius << endl;
+			Shape::info();
+		}
+	};
 }
 void main()
 {
@@ -174,6 +224,9 @@ void main()
 	cout << "Периметр квадрата:          " << square.get_perimeter() << endl;
 	square.draw();*/
 	square.info();
-	Geometry::Rectangle rect(50, 30, Geometry::Color::console_red);
+	Geometry::Rectangle rect(50, 30, Geometry::Color::green);
 	rect.info();
+	Geometry::Circle circle(50, Geometry::Color::blue);
+	circle.info();
+	circle.draw();
 }
