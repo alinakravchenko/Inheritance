@@ -185,7 +185,7 @@ namespace Geometry
 		~Circle() {}
 		double get_area()const
 		{
-			return PI * (radius * radius);
+			return PI * (radius *2);
 		}
 		double get_perimeter()const
 		{
