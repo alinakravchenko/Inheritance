@@ -428,6 +428,89 @@ namespace Geometry
 			Shape::info();
 		}
 	};
+	class RightTriangle :public Triangle
+	{
+		double side_a;
+		double side_b;
+		double side_c;
+	public:
+		double get_side_a()const
+		{
+			return side_a;
+		}
+		double get_side_b()const
+		{
+			return side_b;
+		}
+		double get_side_c()const
+		{
+			return side_c;
+		}
+		double get_height()const
+		{
+			return side_a * side_b / side_c;
+		}
+
+		void set_side_a(double side_a)
+		{
+			if (side_a <= 0)side_a = 1;
+			this->side_a = side_a;
+		}
+		void set_side_b(double side_b)
+		{
+			if (side_b <= 0)side_b = 1;
+			this->side_b = side_b;
+		}
+
+		void set_side_c(double side_c)
+		{
+			if (side_c <= 0)side_c = 1;
+			this->side_c = side_c;
+		}
+		RightTriangle(double side_a, int start_y, double side_b, double side_c, Color color) :
+			Triangle(start_x, start_y, line_width, color)
+		{
+			set_side_a(side_a);
+			set_side_b(side_b);
+			set_side_c(side_c);
+		}
+		~RightTriangle(){}
+		double get_area()const
+		{
+			return 1 / 2 * side_c * this->get_height();
+		}
+		double get_perimeter()const
+		{
+			return side_a + side_b + side_c;
+		}
+		void draw()const
+		{
+			HWND hwnd = GetConsoleWindow();
+			HDC hdc = GetDC(hwnd);
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color);
+			HBRUSH hBrush = CreateSolidBrush(color);
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+			const POINT points[] =
+			{
+				{ start_x,start_y + this->get_height() },
+				{ start_x + side_a,start_y + this->get_height() },
+				{ start_x + side_c / 2,start_y }
+			};
+			Polygon(hdc, points, sizeof(points) / sizeof(POINT));
+			DeleteObject(hBrush);
+			DeleteObject(hPen);
+			ReleaseDC(hwnd, hdc);
+
+		}
+		void info()const
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Сторона треугольника: " << side_a << endl;
+			cout << "Высота треугольника: " << get_height() << endl;
+			Shape::info();
+		}
+	};
 }
 void main()
 {
@@ -451,4 +534,6 @@ void main()
 	itri1.info();
 	Geometry::IsoscalesTriangle itri2(100, 75, 300, 200, 5, Geometry::Color::green);
 	itri2.info();
+	Geometry::RightTriangle it(50, 50, 100,100, Geometry::Color::yellow);
+	it.info();
 }
